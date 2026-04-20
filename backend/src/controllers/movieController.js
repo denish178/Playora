@@ -55,6 +55,16 @@ export const getMovieById = async (req, res) => {
   }
 };
 
+// DELETE A MOVIE
+export const deleteMovie = async (req, res) => {
+  try {
+    await Movie.findByIdAndDelete(req.params.id);
+    res.json({ message: "Movie deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 export const uploadMovie = async (req, res) => {
   try {
     const { title, description } = req.body;
@@ -83,5 +93,19 @@ export const uploadMovie = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+export const searchMovies = async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    const movies = await Movie.find({
+      title: { $regex: query, $options: "i" },
+    });
+
+    res.json(movies);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
